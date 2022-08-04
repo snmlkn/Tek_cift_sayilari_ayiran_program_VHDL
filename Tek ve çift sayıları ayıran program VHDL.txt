@@ -1,0 +1,71 @@
+----------------------------------------------------------------------------------------
+--tek çift sayı ayıran progam
+
+----------------------------------------------------------------------------------------
+library IEEE;
+use IEEE. STD_LOGIC_1164.ALL;
+use IEEE.std_logic_arith.all;
+
+entity uygulama1 is
+
+	Port(
+		clk: in std_logic;
+		rst: in std_logic;
+		veri: in std_logic_vector(31 downto 0);
+		tek: out std_logic_vector(3 downto 0);
+		cift: out std_logic_vector(3 downto 0)
+	);
+end uygulama1; 
+
+
+architecture Behavioral of uygulama1 is
+	type dizi is array(0 to 7) of std_logic_vector(3 downto 0);
+	signal xRam : dizi;
+	signal islem : std_logic_vector(1 downto 0) := "00";
+	signal v: std_logic_vector(31 downto 0);
+	signal t,c: natural := 0;
+begin
+	process(clk,rst)
+	begin 
+		if rst='1' then
+			t <= 0;
+			c <= 0;
+		elsif rising_edge(clk) then
+			case islem is 
+				when "00" => 
+					--giriş verisi sinyale aktarılıyor.
+					v <= veri;
+					islem <= "01"; --bir sonraki duruma geç
+				when "01" =>
+					--veriler diziye aktarılıyor.
+				    if indis < 8 then
+						xRam(indis) <= v(say+3 downto say);
+						indis <= indis + 1;
+						say <= say + 4;
+					else
+						indis <= 0;
+						islem <= "10";
+					end if;
+				when "10" =>
+					--dizideki sayıları tek veya çift olması
+					if indis < 8 then
+						if xRam(indis)(0)='1' then
+							t <= t + 1; 
+					else 
+						c <= c + 1;
+					end if;
+				else 
+					indis <= 0;
+					islem <= "11";
+				end if;
+				
+			when others=>
+				--veriler çıkışa aktarılıyor.
+				tek <= conv_std_logic_vector(t,tek'lenght);
+				cift <=conv_std_logic_vector(c,cift'lenght);
+			end case;	
+		end if;
+	
+	end process;
+
+end Behavioral;
